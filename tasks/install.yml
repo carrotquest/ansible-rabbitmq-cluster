@@ -1,40 +1,42 @@
 ---
-- name: install gdebi
+- name: Update all packages
   apt:
+    name: "*"
+    state: latest
     update_cache: yes
-    force: yes
-    pkg: gdebi
+    force_apt_get: true
+
+- name: Verify Python is installed
+  apt: pkg=python-software-properties state=present
+
+- name: Add RabbitMQ offical repo
+  apt_repository:
+    repo: deb https://dl.bintray.com/rabbitmq/debian xenial main
+    state: present
+    filename: rabbitmq
+
+- name: Install RabbitMQ public key
+  apt_key:
+    url: https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc
     state: present
 
-- name: Check if esl-erlang is installed
-  command: dpkg-query -W esl-erlang
-  register: erlang_pkg_check
-  ignore_errors: yes
-  changed_when: false
+- name: Add Erlang official repo
+  apt_repository:
+    repo: deb http://binaries.erlang-solutions.com/debian xenial contrib
+    state: present
+    filename: erlang
 
-- name: Download esl-erlang
-  get_url: 
-    url: "{{ erlang_download_url }}"
-    dest: "/root/{{ erlang_pkg_name }}"
-  when: erlang_pkg_check.stdout.find("{{ erlang_version }}") == -1
+- name: Install Erlang public key
+  apt_key:
+    url: http://binaries.erlang-solutions.com/debian/erlang_solutions.asc
+    state: present
 
-- name: install esl-erlang
-  command: gdebi -n "/root/{{ erlang_pkg_name }}"
-  when: erlang_pkg_check.stdout.find("{{ erlang_version }}") == -1
-
-- name: install rabbitmq-server
+- name: Install RabbitMQ & Erlang packages
   apt:
+    name: "{{ item }}"
     update_cache: yes
-    force: yes
-    pkg: "{{ item }}"
+    install_recommends: yes
     state: present
   with_items:
     - rabbitmq-server
-
-- name: customize logrotate rules
-  template:
-    src: etc/logrotate.d/rabbitmq-server.j2
-    dest: /etc/logrotate.d/rabbitmq-server
-    owner: root
-    group: root
-    mode: 0644
+    - erlang-ssl
