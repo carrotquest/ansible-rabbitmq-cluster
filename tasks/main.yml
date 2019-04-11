@@ -5,16 +5,16 @@
   when: rabbitmq_create_cluster
 
 - include_tasks: tls.yml
-  when: enable_tls
+  when: rabbitmq_enable_tls
 
 - include_tasks: config.yml
 
 - include_tasks: service.yml
 
 - include_tasks: cluster.yml
-  when: rabbitmq_create_cluster == true
+  when: rabbitmq_create_cluster
 
 - include_tasks: create_users.yml
 
 - include_tasks: enable_ha_queues.yml
-  when: backup_queues_in_two_nodes
+  when: rabbitmq_backup_queues_in_two_nodes

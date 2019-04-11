@@ -1,5 +1,5 @@
 ---
-- name: rabbitmq service started and enabled
+- name: service | RabbitMQ service started and enabled
   service:
     name: rabbitmq-server
     enabled: yes

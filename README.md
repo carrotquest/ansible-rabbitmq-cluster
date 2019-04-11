@@ -43,21 +43,6 @@ This role uses ansible fqdn equals `rabbitmq_cluster_master` or not to determine
 
 All the other variables are optional and listed below along with default values (see `defaults/main.yml`):
 
-    update_hosts: false
-
-Whether you need to update hosts file or not, default false. This is useful when you are using AWS EC2 instance, whose default hostname is too long and doesn't have a meaning, like "ip-10-101-50-12.eu-central-1.compute.internal", but you want to use something shorter and meaningful as hostname. In this case you need to set this variable to true in order to update the hosts file, and you need to define a variable named "rabbitmq_hosts", with the following format:
-
-    rabbitmq_hosts: |
-      node-1-ip node-1-FQDN
-      node-2-ip node-2-FQDN
-
-example:
-
-    rabbitmq_hosts: |
-      10.0.0.10 eu-central-1-mq-master   (whatever the command `hostname -f` outputs on this host)
-      10.0.0.11 eu-central-1-mq-slave-01 (whatever the command `hostname -f` outputs on this host)
-.
-
     rabbitmq_create_cluster: yes
 
 To use cluster or not. Default yes, which means slave will join the master as a cluster.
@@ -101,33 +86,33 @@ RabbitMQ default ports.
 
 Plugins installed by default, mainly for HTTP API monitor.
 
-    enable_tls: false
+    rabbitmq_enable_tls: false
 
 Enable TLS/SSL or not.
 
-    tls_only: false
+    rabbitmq_tls_only: false
 
 If true, only TLS port is open; default amqp port 5672 will be disabled.
 
-    tls_verify: "verify_none"
-    tls_fail_if_no_peer_cert: false
+    rabbitmq_tls_verify: "verify_none"
+    rabbitmq_tls_fail_if_no_peer_cert: false
 
 Settings for TLS. More info at: https://www.rabbitmq.com/ssl.html
 
-    cacertfile: ""
-    cacertfile_dest: "/etc/rabbitmq/cacert.pem"
+    rabbitmq_cacertfile: ""
+    rabbitmq_cacertfile_dest: "/etc/rabbitmq/cacert.pem"
 
-    certfile: ""
-    certfile_dest: "/etc/rabbitmq/cert.pem"
+    rabbitmq_certfile: ""
+    rabbitmq_certfile_dest: "/etc/rabbitmq/cert.pem"
 
-    keyfile: ""
-    keyfile_dest: "/etc/rabbitmq/key.pem"
+    rabbitmq_keyfile: ""
+    rabbitmq_keyfile_dest: "/etc/rabbitmq/key.pem"
 
 If TLS is enabled, you need to specify cacert/certfile/keyfile location, and where to put them on the server.
 
-    backup_queues_in_two_nodes: false
+    rabbitmq_backup_queues_in_two_nodes: false
 
-By default, queues within a RabbitMQ cluster are located on a single node (the node on which they were first declared). Queues can optionally be made mirrored across all nodes, or exactly N number of nodes. By enabling this variable to true, there will be 1 queue master and 1 queue mirror. If the node running the queue master becomes unavailable, the queue mirror will be automatically promoted to master.
+By default, queues within a RabbitMQ cluster are located on a single node (the node on which they were first declared). Queues can optionally be made mirrored across all nodes, or exactly N number of nodes. By enabling this variable to true, there will be 1 queue leader and 1 queue mirror. If the node running the queue leader becomes unavailable, the queue mirror will be automatically promoted to leader.
 
 More info see: https://www.rabbitmq.com/ha.html
 
@@ -144,17 +129,13 @@ Playbook:
 
 Group vars file 'mq-cluster':
 
-    rabbitmq_cluster_master: mq-cluster-master
-    update_hosts: true
-    rabbitmq_hosts: |
-      10.0.0.10 mq-cluster-master
-      10.0.0.11 mq-cluster-slave-01
-    enable_tls: true
-    cert_dir: "{{ playbook_dir }}/../common_files/ssl"
-    cacertfile: "{{ cert_dir }}/cacert.pem"
-    certfile: "{{ cert_dir }}/cert.pem"
-    keyfile: "{{ cert_dir }}/key.pem"
-    backup_queues_in_two_nodes: true
+    rabbitmq_cluster_leader: mq-cluster-leader
+    rabbitmq_enable_tls: true
+    rabbitmq_cert_dir: "{{ playbook_dir }}/../common_files/ssl"
+    rabbitmq_cacertfile: "{{ cert_dir }}/cacert.pem"
+    rabbitmq_certfile: "{{ cert_dir }}/cert.pem"
+    rabbitmq_keyfile: "{{ cert_dir }}/key.pem"
+    rabbitmq_backup_queues_in_two_nodes: true
 
 Inventory file:
 

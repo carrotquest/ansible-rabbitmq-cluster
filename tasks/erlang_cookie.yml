@@ -1,22 +1,21 @@
 ---
 # Configure RabbitMQ for cluster
-- name: Backup old Erlang cookie
-  shell: cp -a /var/lib/rabbitmq/.erlang.cookie /var/lib/rabbitmq/.erlang.cookie.old
+- name: erlang_cookie | Backup old Erlang cookie
+  command: cp -a /var/lib/rabbitmq/.erlang.cookie /var/lib/rabbitmq/.erlang.cookie.old
   changed_when: false
 
-- name: Update Erlang cookie
+- name: erlang_cookie | Update Erlang cookie
   template:
     src: erlang.cookie.j2
     dest: /var/lib/rabbitmq/.erlang.cookie
     owner: rabbitmq
     group: rabbitmq
     mode: 0400
-  notify:
-    stop rabbitmq-server
+  notify: stop rabbitmq-server
 
 - meta: flush_handlers
 
-- name: Remove old Erlang cookie
+- name: erlang_cookie | Remove old Erlang cookie
   file:
     path: /var/lib/rabbitmq/.erlang.cookie.old
     state: absent

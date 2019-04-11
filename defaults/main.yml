@@ -1,27 +1,4 @@
 ---
-# Whether you need to update hosts file or not, default false.
-# This is useful when you are using AWS EC2 instance, whose default hostname is too long and doesn't have a meaning,
-# like "ip-10-101-50-12.eu-central-1.compute.internal", but you want to use something shorter and meaningful as hostname.
-# In this case you need to set this variable to true in order to update the hosts file, and you need to define a variable named "rabbitmq_hosts",
-# with the following format:
-#
-# rabbitmq_hosts: |
-#   node-1-ip node-1-FQDN
-#   node-2-ip node-2-FQDN
-#
-# example:
-#
-# rabbitmq_hosts: |
-#   10.0.0.10 eu-central-1-mq-master   (whatever the command `hostname -f` outputs on this host)
-#   10.0.0.11 eu-central-1-mq-slave-01 (whatever the command `hostname -f` outputs on this host)
-#
-update_hosts: false
-
-# erlang
-erlang_version: "1:20.2.2"
-erlang_download_url: "http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_20.2.2-1~ubuntu~xenial_amd64.deb"
-erlang_pkg_name: "esl-erlang_20.2.2-1~ubuntu~xenial_amd64.deb"
-
 # cluster
 rabbitmq_create_cluster: yes
 rabbitmq_erlang_cookie: WKRBTTEQRYPTQOPUKSVF
@@ -30,6 +7,7 @@ rabbitmq_erlang_cookie: WKRBTTEQRYPTQOPUKSVF
 # This may prove useful on EC2.
 # Note that it is not possible to switch between using short and long names without resetting the node.
 rabbitmq_use_longname: 'false'
+rabbitmq_cluster_leader: 'rabbitmq-cluster-leader-name'
 
 # log rotate
 rabbitmq_logrotate_period: weekly
@@ -56,24 +34,37 @@ rabbitmq_plugins:
   - rabbitmq_shovel_management
 
 # TLS/SSL support
-enable_tls: false
+rabbitmq_enable_tls: false
 # if true, only tls is supported which means amqp default port 5672 is not open anymore
-tls_only: false
+rabbitmq_tls_only: false
 
-tls_verify: "verify_none"
-tls_fail_if_no_peer_cert: false
+rabbitmq_tls_verify: "verify_none"
+rabbitmq_tls_fail_if_no_peer_cert: false
 
-cacertfile: ""
-cacertfile_dest: "/etc/rabbitmq/cacert.pem"
+rabbitmq_cacertfile: ""
+rabbitmq_cacertfile_dest: "/etc/rabbitmq/cacert.pem"
 
-certfile: ""
-certfile_dest: "/etc/rabbitmq/cert.pem"
+rabbitmq_certfile: ""
+rabbitmq_certfile_dest: "/etc/rabbitmq/cert.pem"
 
-keyfile: ""
-keyfile_dest: "/etc/rabbitmq/key.pem"
+rabbitmq_keyfile: ""
+rabbitmq_keyfile_dest: "/etc/rabbitmq/key.pem"
 
 # By default, queues within a RabbitMQ cluster are located on a single node (the node on which they were first declared).
 # Queues can optionally be made mirrored across all nodes, or exactly N number of nodes
 # By enabling this variable to true, there will be 1 queue master and 1 queue mirror.
 # If the node running the queue master becomes unavailable, the queue mirror will be automatically promoted to master.
-backup_queues_in_two_nodes: false
+rabbitmq_backup_queues_in_two_nodes: false
+
+rabbitmq_users:
+  - name: 'rabbitmqadmin'
+    password: 'rabbitmqadmin'
+    # Define comma separated list of tags to assign to user:
+    # management,policymaker,monitoring,administrator
+    # required for management plugin.
+    # https://www.rabbitmq.com/management.html
+    tags: 'administrator'
+    vhost: '/'
+    configure_priv: '.*'
+    read_priv: '.*'
+    write_priv: '.*'

@@ -1,6 +1,6 @@
 ---
 # Copy cacert, cert and key file for TLS/SSL
-- name: make sure TLS/SSL certificates exists
+- name: tls | Make sure TLS/SSL certificates exists
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

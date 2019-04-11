@@ -1,16 +1,44 @@
 ---
-- name: Add RabbitMQ Admin User
+- name: create_users | Creating RabbitMQ single users
   rabbitmq_user:
-    user: "{{ rabbitmq_admin_user }}"
-    password: "{{ rabbitmq_admin_password }}"
-    tags: administrator
-    vhost: /
-    configure_priv: .*
-    read_priv: .*
-    write_priv: .*
+    name: "{{ item['name'] }}"
+    password: "{{ item['password'] }}"
+    vhost: "{{ item['vhost'] }}"
+    configure_priv: "{{ item['configure_priv'] }}"
+    read_priv: "{{ item['read_priv'] }}"
+    write_priv: "{{ item['write_priv'] }}"
+    tags: "{{ item['tags'] }}"
     state: present
-
-- name: Remove RabbitMQ default user
+  become: true
+  with_items: "{{ rabbitmq_users }}"
+  when: (rabbitmq_create_cluster is defined and not rabbitmq_create_cluster) or rabbitmq_create_cluster is not defined
+  
+- name: create_users | Remove RabbitMQ default user
   rabbitmq_user:
     user: guest
     state: absent
+  become: true
+  when: (rabbitmq_create_cluster is defined and not rabbitmq_create_cluster) or rabbitmq_create_cluster is not defined
+
+- name: create_users | Creating RabbitMQ cluster users
+  rabbitmq_user:
+    name: "{{ item['name'] }}"
+    password: "{{ item['password'] }}"
+    vhost: "{{ item['vhost'] }}"
+    configure_priv: "{{ item['configure_priv'] }}"
+    read_priv: "{{ item['read_priv'] }}"
+    write_priv: "{{ item['write_priv'] }}"
+    tags: "{{ item['tags'] }}"
+    state: present
+  run_once: yes
+  become: true
+  with_items: "{{ rabbitmq_users }}"
+  when: rabbitmq_create_cluster is defined and rabbitmq_create_cluster
+
+- name: create_users | Remove RabbitMQ default user
+  rabbitmq_user:
+    user: guest
+    state: absent
+  run_once: yes
+  become: true
+  when: rabbitmq_create_cluster is defined and rabbitmq_create_cluster
