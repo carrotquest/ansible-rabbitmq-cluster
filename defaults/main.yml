@@ -20,7 +20,7 @@ rabbitmq_packages:
 rabbitmq_create_cluster: yes
 
 # We just need one of installed hosts to be cluster join endpoint - will choose first node of "rabbitmq" inventory group
-rabbitmq_cluster_master: "{{ hostvars[groups['rabbitmq'][0]]['ansible_hostname'] }}"
+rabbitmq_cluster_leader: "{{ hostvars[groups['rabbitmq'][0]]['ansible_hostname'] }}"
 
 # Erlang cookie is just a string of alphanumeric characters up to 255 chars
 rabbitmq_erlang_cookie: 00000000000000000000
@@ -29,7 +29,6 @@ rabbitmq_erlang_cookie: 00000000000000000000
 # This may prove useful on EC2.
 # Note that it is not possible to switch between using short and long names without resetting the node.
 rabbitmq_use_longname: 'false'
-rabbitmq_cluster_leader: 'rabbitmq-cluster-leader-name'
 
 # log rotate
 rabbitmq_logrotate_period: weekly
