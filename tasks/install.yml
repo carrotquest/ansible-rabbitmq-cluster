@@ -1,36 +1,11 @@
 ---
-- name: install | Verify software-properties-common is installed
+
+- name: Install Erlang packages
   apt:
-    name: software-properties-common
-    update_cache: yes
-    cache_valid_time: 3600
+    name: "{{ erlang_packages }}"
     state: present
 
-- name: install | Add RabbitMQ public key
-  apt_key:
-    url: https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc
-    state: present
-
-- name: install | Add Erlang public key
-  apt_key:
-    url: http://binaries.erlang-solutions.com/debian/erlang_solutions.asc
-    state: present
-
-- name: install | Add RabbitMQ offical repo
-  apt_repository:
-    repo: "deb https://dl.bintray.com/rabbitmq/debian {{ ansible_distribution_release }} main"
-    state: present
-    filename: rabbitmq
-
-- name: install | Add Erlang official repo
-  apt_repository:
-    repo: "deb http://binaries.erlang-solutions.com/debian {{ ansible_distribution_release }} contrib"
-    state: present
-    filename: erlang
-
-- name: install | Install RabbitMQ & Erlang packages
+- name: Install RabbitMQ packages
   apt:
-    name: [rabbitmq-server, erlang-ssl]
-    install_recommends: yes
-    update_cache: yes
+    name: "{{ rabbitmq_packages }}"
     state: present

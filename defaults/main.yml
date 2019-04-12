@@ -1,7 +1,29 @@
 ---
+
+update_hosts: false
+
+erlang_apt_repo_keyid: "6026DFCA"
+erlang_apt_repo_key: "https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc"
+erlang_apt_repo_string: "deb http://dl.bintray.com/rabbitmq-erlang/debian {{ ansible_distribution_release }} erlang"
+
+erlang_packages:
+  - erlang-nox
+
+rabbitmq_apt_repo_keyid: "{{ erlang_apt_repo_keyid }}"
+rabbitmq_apt_repo_key: "{{ erlang_apt_repo_key }}"
+rabbitmq_apt_repo_string: "deb https://dl.bintray.com/rabbitmq/debian {{ ansible_distribution_release }} main"
+
+rabbitmq_packages:
+  - rabbitmq-server
+
 # cluster
 rabbitmq_create_cluster: yes
-rabbitmq_erlang_cookie: WKRBTTEQRYPTQOPUKSVF
+
+# We just need one of installed hosts to be cluster join endpoint - will choose first node of "rabbitmq" inventory group
+rabbitmq_cluster_master: "{{ hostvars[groups['rabbitmq'][0]]['ansible_hostname'] }}"
+
+# Erlang cookie is just a string of alphanumeric characters up to 255 chars
+rabbitmq_erlang_cookie: 00000000000000000000
 # https://www.rabbitmq.com/configure.html#define-environment-variables
 # When set to true this will cause RabbitMQ to use fully qualified names to identify nodes.
 # This may prove useful on EC2.

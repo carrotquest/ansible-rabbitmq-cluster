@@ -43,6 +43,21 @@ This role uses ansible fqdn equals `rabbitmq_cluster_master` or not to determine
 
 All the other variables are optional and listed below along with default values (see `defaults/main.yml`):
 
+    update_hosts: false
+
+Whether you need to update hosts file or not, default false. This is useful when you are using AWS EC2 instance, whose default hostname is too long and doesn't have a meaning, like "ip-10-101-50-12.eu-central-1.compute.internal", but you want to use something shorter and meaningful as hostname. In this case you need to set this variable to true in order to update the hosts file, and you need to define a variable named "rabbitmq_hosts", with the following format:
+
+    rabbitmq_hosts: |
+      node-1-ip node-1-FQDN
+      node-2-ip node-2-FQDN
+
+example:
+
+    rabbitmq_hosts: |
+      10.0.0.10 eu-central-1-mq-master   (whatever the command `hostname -f` outputs on this host)
+      10.0.0.11 eu-central-1-mq-slave-01 (whatever the command `hostname -f` outputs on this host)
+.
+
     rabbitmq_create_cluster: yes
 
 To use cluster or not. Default yes, which means slave will join the master as a cluster.
@@ -129,13 +144,17 @@ Playbook:
 
 Group vars file 'mq-cluster':
 
-    rabbitmq_cluster_leader: mq-cluster-leader
-    rabbitmq_enable_tls: true
-    rabbitmq_cert_dir: "{{ playbook_dir }}/../common_files/ssl"
-    rabbitmq_cacertfile: "{{ cert_dir }}/cacert.pem"
-    rabbitmq_certfile: "{{ cert_dir }}/cert.pem"
-    rabbitmq_keyfile: "{{ cert_dir }}/key.pem"
-    rabbitmq_backup_queues_in_two_nodes: true
+    rabbitmq_cluster_master: mq-cluster-master
+    update_hosts: true
+    rabbitmq_hosts: |
+      10.0.0.10 mq-cluster-master
+      10.0.0.11 mq-cluster-slave-01
+    enable_tls: true
+    cert_dir: "{{ playbook_dir }}/../common_files/ssl"
+    cacertfile: "{{ cert_dir }}/cacert.pem"
+    certfile: "{{ cert_dir }}/cert.pem"
+    keyfile: "{{ cert_dir }}/key.pem"
+    backup_queues_in_two_nodes: true
 
 Inventory file:
 
