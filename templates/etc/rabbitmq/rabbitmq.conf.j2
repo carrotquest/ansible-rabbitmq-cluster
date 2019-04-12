@@ -1,13 +1,32 @@
 # {{ ansible_managed }}
+# Network
+channel_max = 0
+num_acceptors.tcp = 1000
 
 listeners.tcp.1 = 127.0.0.1:{{ rabbitmq_amqp_port }}
 listeners.tcp.2 = {{ rabbitmq_ip }}:{{ rabbitmq_amqp_port }}
 
 {% if enable_tls %}
+# TLS
 listeners.ssl.default  = {{ rabbitmq_tls_port }}
 ssl_options.cacertfile = {{ cacertfile_dest }}
 ssl_options.certfile   = {{ certfile_dest }}
 ssl_options.keyfile    = {{ keyfile_dest }}
 ssl_options.verify     = {{ tls_verify }}
 ssl_options.fail_if_no_peer_cert = {{tls_fail_if_no_peer_cert|lower}}
+
 {% endif %}
+# Users
+loopback_users.guest = true
+loopback_users = none
+
+# Log
+log.file.level = debug
+log.console = false
+
+# Memory Limit
+vm_memory_high_watermark.relative = 0.8
+vm_memory_high_watermark.absolute = 512MB
+
+# Disk Limit
+disk_free_limit.absolute = 512MB
