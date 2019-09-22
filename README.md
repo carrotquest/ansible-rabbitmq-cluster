@@ -1,6 +1,6 @@
-Table of Content:
-<!-- MarkdownTOC -->
+# Table of Content
 
+<!-- MarkdownTOC -->
 - Ansible Role: RabbitMQ Cluster
 - Requirements
 - Must-have Role Variables
@@ -8,10 +8,9 @@ Table of Content:
 - Example
 - License
 - Author Information
-
 <!-- /MarkdownTOC -->
 
-# Ansible Role: RabbitMQ Cluster
+## Ansible Role: RabbitMQ Cluster
 
 An Ansible Role, that installs a RabbitMQ multi-node cluster.
 
@@ -24,12 +23,11 @@ Major changes and differences:
 - Simple template and config
 - More comments and more readable code
 
-# Requirements
+## Requirements
 
 None, but note that `hostname -f` should work on every node, and this is especially worth paying some attention if you work with AWS EC2 instances, since in aws the host name is like `ip-xxx-xxx-xxx-xxx.eu-central-1.compute.internal`.
 
-
-# Must-have Role Variables
+## Must-have Role Variables
 
 Must have variables are listed below:
 
@@ -39,7 +37,7 @@ This parameter is used to determine which node is the master, because some tasks
 
 This role uses ansible fqdn equals `rabbitmq_cluster_master` or not to determine if it's master or slave.
 
-# Optional Role Variables and Defaults
+## Optional Role Variables and Defaults
 
 All the other variables are optional and listed below along with default values (see `defaults/main.yml`):
 
@@ -56,7 +54,6 @@ example:
     rabbitmq_hosts: |
       10.0.0.10 eu-central-1-mq-master   (whatever the command `hostname -f` outputs on this host)
       10.0.0.11 eu-central-1-mq-slave-01 (whatever the command `hostname -f` outputs on this host)
-.
 
     rabbitmq_create_cluster: yes
 
@@ -64,34 +61,34 @@ To use cluster or not. Default yes, which means slave will join the master as a 
 
     rabbitmq_erlang_cookie: WKRBTTEQRYPTQOPUKSVF
 
-RabbitMQ nodes and CLI tools (e.g. rabbitmqctl) use a cookie to determine whether they are allowed to communicate with each other. For two nodes to be able to communicate they must have the same shared secret called the Erlang cookie. 
+RabbitMQ nodes and CLI tools (e.g. rabbitmqctl) use a cookie to determine whether they are allowed to communicate with each other. For two nodes to be able to communicate they must have the same shared secret called the Erlang cookie.
 
-For more info see: https://www.rabbitmq.com/clustering.html
+For more info see: [Clustering](https://www.rabbitmq.com/clustering.html)
 
     rabbitmq_use_longname: 'false'
 
 When set to true this will cause RabbitMQ to use fully qualified names to identify nodes. This may prove useful on EC2. Note that it is not possible to switch between using short and long names without resetting the node.
 
-For more info see: https://www.rabbitmq.com/configure.html#define-environment-variables
+For more info see: [define-environment-variables](https://www.rabbitmq.com/configure.html#define-environment-variables)
 
     rabbitmq_logrotate_period: weekly
-    rabbitmq_logrotate_amount: 20
+    rabbitmq_logrotate_amount: 8
 
 Log rotation settings.
 
-    rabbitmq_ulimit_open_files: 4096
+    rabbitmq_limit_files: 4096
+    rabbitmq_limit_sockets: 4096
+    rabbitmq_memlock_enabled: no
 
 The main setting that needs adjustment is the max number of open files, also known as ulimit -n. The default value on many operating systems is too low for a messaging broker (eg. 1024 on several Linux distributions). RabbitMQ recommends allowing for at least 65536 file descriptors for user rabbitmq in production environments. 4096 should be sufficient for most development workloads.
 
-More info at: https://www.rabbitmq.com/install-debian.html
+More info at: [Install Debian](https://www.rabbitmq.com/install-debian.html)
 
     rabbitmq_tls_port: 5671
-    rabbitmq_amqp_port: 5672
     rabbitmq_epmd_port: 4369
-    rabbitmq_node_port: 25672
+    rabbitmq_node_port: 5672
 
 RabbitMQ default ports.
-
 
     rabbitmq_plugins:
       - rabbitmq_management
@@ -112,7 +109,7 @@ If true, only TLS port is open; default amqp port 5672 will be disabled.
     rabbitmq_tls_verify: "verify_none"
     rabbitmq_tls_fail_if_no_peer_cert: false
 
-Settings for TLS. More info at: https://www.rabbitmq.com/ssl.html
+Settings for TLS. More info at: [SSL](https://www.rabbitmq.com/ssl.html)
 
     rabbitmq_cacertfile: ""
     rabbitmq_cacertfile_dest: "/etc/rabbitmq/cacert.pem"
@@ -129,9 +126,9 @@ If TLS is enabled, you need to specify cacert/certfile/keyfile location, and whe
 
 By default, queues within a RabbitMQ cluster are located on a single node (the node on which they were first declared). Queues can optionally be made mirrored across all nodes, or exactly N number of nodes. By enabling this variable to true, there will be 1 queue leader and 1 queue mirror. If the node running the queue leader becomes unavailable, the queue mirror will be automatically promoted to leader.
 
-More info see: https://www.rabbitmq.com/ha.html
+More info see: [HA](https://www.rabbitmq.com/ha.html)
 
-# Example
+## Example
 
 Playbook:
 
@@ -144,17 +141,17 @@ Playbook:
 
 Group vars file 'mq-cluster':
 
-    rabbitmq_cluster_master: mq-cluster-master
+    rabbitmq_cluster_leader: mq-cluster-leader
     update_hosts: true
     rabbitmq_hosts: |
       10.0.0.10 mq-cluster-master
       10.0.0.11 mq-cluster-slave-01
-    enable_tls: true
-    cert_dir: "{{ playbook_dir }}/../common_files/ssl"
-    cacertfile: "{{ cert_dir }}/cacert.pem"
-    certfile: "{{ cert_dir }}/cert.pem"
-    keyfile: "{{ cert_dir }}/key.pem"
-    backup_queues_in_two_nodes: true
+    rabbitmq_enable_tls: true
+    rabbitmq_cert_dir: "{{ playbook_dir }}/../common_files/ssl"
+    rabbitmq_cacertfile: "{{ cert_dir }}/cacert.pem"
+    rabbitmq_certfile: "{{ cert_dir }}/cert.pem"
+    rabbitmq_keyfile: "{{ cert_dir }}/key.pem"
+    rabbitmq_backup_queues_in_two_nodes: true
 
 Inventory file:
 
@@ -162,10 +159,10 @@ Inventory file:
     10.0.0.10
     10.0.0.11
 
-# License
+## License
 
 MIT / BSD
 
-# Author Information
+## Author Information
 
 This role was created between late 2017 and early 2018 by [Tiexin Guo].

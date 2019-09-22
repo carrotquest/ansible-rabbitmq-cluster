@@ -1,4 +1,26 @@
 ---
+- name: service | Override RabbitMQ systemd service
+  block:
+  - name: service | Check override path
+    file:
+      path: /etc/systemd/system/rabbitmq-server.service.d
+      owner: root
+      group: root
+      mode: 0755
+      state: directory
+  - name: service | Create systemd service override file
+    template:
+      src: rabbitmq-server.service.override.j2
+      dest: /etc/systemd/system/rabbitmq-server.service.d/override.conf
+      owner: root
+      group: root
+      mode: 0644
+  - name: service | Reload systemd config
+    systemd:
+      daemon_reload: yes
+  when:
+  - ansible_service_mgr == 'systemd'
+
 - name: service | RabbitMQ service started and enabled
   service:
     name: rabbitmq-server

@@ -1,6 +1,6 @@
 ---
 
-update_hosts: false
+rabbitmq_update_hosts: false
 
 erlang_apt_repo_keyid: "6026DFCA"
 erlang_apt_repo_key: "https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc"
@@ -17,10 +17,13 @@ rabbitmq_packages:
   - rabbitmq-server
 
 # cluster
+rabbitmq_cluster_name: rabbitmq
 rabbitmq_create_cluster: yes
 
 # We just need one of installed hosts to be cluster join endpoint - will choose first node of "rabbitmq" inventory group
-rabbitmq_cluster_leader: "{{ hostvars[groups['rabbitmq'][0]]['ansible_hostname'] }}"
+rabbitmq_cluster_leader: "{{ hostvars[groups['rabbitmq'][0]]['ansible_hostname_short'] }}"
+rabbitmq_bind_address: "{{ ansible_host }}"
+rabbitmq_ip: "{{ ansible_host }}"
 
 # Erlang cookie is just a string of alphanumeric characters up to 255 chars
 rabbitmq_erlang_cookie: 00000000000000000000
@@ -30,22 +33,26 @@ rabbitmq_erlang_cookie: 00000000000000000000
 # Note that it is not possible to switch between using short and long names without resetting the node.
 rabbitmq_use_longname: 'false'
 
-# log rotate
+# logging
+rabbitmq_log_level: debug
 rabbitmq_logrotate_period: weekly
-rabbitmq_logrotate_amount: 20
+rabbitmq_logrotate_amount: 8
 
 # https://www.rabbitmq.com/install-debian.html
 # The main setting that needs adjustment is the max number of open files, also known as ulimit -n.
 # The default value on many operating systems is too low for a messaging broker (eg. 1024 on several Linux distributions).
 # We recommend allowing for at least 65536 file descriptors for user rabbitmq in production environments.
 # 4096 should be sufficient for most development workloads
-rabbitmq_ulimit_open_files: 4096
+rabbitmq_limit_files: 4096
+rabbitmq_limit_sockets: 4096
+rabbitmq_memlock_enabled: no
 
 # default ports
 rabbitmq_tls_port: 5671
-rabbitmq_amqp_port: 5672
 rabbitmq_epmd_port: 4369
-rabbitmq_node_port: 25672
+rabbitmq_node_port: 5672
+rabbitmq_tls_mgmt_port: 15671
+rabbitmq_tcp_mgmt_port: 15672
 
 # plugins for HTTP API monitor
 rabbitmq_plugins:
@@ -60,7 +67,7 @@ rabbitmq_enable_tls: false
 rabbitmq_tls_only: false
 
 rabbitmq_tls_verify: "verify_none"
-rabbitmq_tls_fail_if_no_peer_cert: false
+rabbitmq_tls_fail_if_no_peer_cert: no
 
 rabbitmq_cacertfile: ""
 rabbitmq_cacertfile_dest: "/etc/rabbitmq/cacert.pem"
@@ -75,7 +82,10 @@ rabbitmq_keyfile_dest: "/etc/rabbitmq/key.pem"
 # Queues can optionally be made mirrored across all nodes, or exactly N number of nodes
 # By enabling this variable to true, there will be 1 queue master and 1 queue mirror.
 # If the node running the queue master becomes unavailable, the queue mirror will be automatically promoted to master.
-rabbitmq_backup_queues_in_two_nodes: false
+rabbitmq_cluster_ha_enabled: no
+rabbitmq_cluster_ha_strategy: exactly
+rabbitmq_cluster_ha_params: 2
+rabbitmq_cluster_ha_batch: 10000
 
 rabbitmq_users:
   - name: 'rabbitmqadmin'

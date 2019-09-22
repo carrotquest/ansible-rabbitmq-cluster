@@ -1,32 +1,83 @@
-# {{ ansible_managed }}
-# Network
+## {{ ansible_managed }}
+## Network
+heartbeat = 30
+# frame_max = 131072
+
+## Set the max frame size the server will accept before connection tuning occurs
+# initial_frame_max = 4096
+
+## Set the max permissible number of channels per connection.
+## 0 means "no limit".
 channel_max = 0
+
+## Customising TCP Listener (Socket) Configuration.
+tcp_listen_options.backlog = 16384
+# tcp_listen_options.nodelay = true
+# tcp_listen_options.exit_on_close = false
+tcp_listen_options.keepalive = true
+# tcp_listen_options.send_timeout = 15000
+# tcp_listen_options.buffer = 196608
+# tcp_listen_options.sndbuf = 196608
+# tcp_listen_options.recbuf = 196608
+
 num_acceptors.tcp = 1000
 
-listeners.tcp.1 = 127.0.0.1:{{ rabbitmq_amqp_port }}
-listeners.tcp.2 = {{ rabbitmq_ip }}:{{ rabbitmq_amqp_port }}
+## Listeners
+listeners.tcp.local = 127.0.0.1:{{ rabbitmq_node_port }}
+listeners.tcp.local_v6 = ::1:{{ rabbitmq_node_port }}
+listeners.tcp.default = {{ rabbitmq_bind_address }}:{{ rabbitmq_node_port }}
+{% if rabbitmq_enable_tls %}
 
-{% if enable_tls %}
-# TLS
-listeners.ssl.default  = {{ rabbitmq_tls_port }}
-ssl_options.cacertfile = {{ cacertfile_dest }}
-ssl_options.certfile   = {{ certfile_dest }}
-ssl_options.keyfile    = {{ keyfile_dest }}
-ssl_options.verify     = {{ tls_verify }}
-ssl_options.fail_if_no_peer_cert = {{tls_fail_if_no_peer_cert|lower}}
-
+## TLS
+num_acceptors.ssl = 1000
+listeners.ssl.default = {{ rabbitmq_tls_port }}
+ssl_options.cacertfile = {{ rabbitmq_cacertfile_dest }}
+ssl_options.certfile = {{ rabbitmq_certfile_dest }}
+ssl_options.keyfile = {{ rabbitmq_keyfile_dest }}
+ssl_options.verify = {{ rabbitmq_tls_verify }}
+ssl_options.fail_if_no_peer_cert = {{rabbitmq_tls_fail_if_no_peer_cert|lower}}
 {% endif %}
-# Users
+{% if rabbitmq_cluster_ha_enabled %}
+
+## HA Clustering
+cluster_partition_handling = autoheal
+mirroring_sync_batch_size = {{ rabbitmq_cluster_ha_batch }}
+{% endif %}
+
+## Users
 loopback_users.guest = true
 loopback_users = none
 
-# Log
-log.file.level = debug
+## Log
+log.file.level = {{ rabbitmq_log_level }}
 log.console = false
 
-# Memory Limit
-vm_memory_high_watermark.relative = 0.8
-vm_memory_high_watermark.absolute = 512MB
+## Memory Limit
+vm_memory_high_watermark_paging_ratio = 0.3
+vm_memory_high_watermark.relative = 0.9
+vm_memory_high_watermark.absolute = 256MB
 
-# Disk Limit
-disk_free_limit.absolute = 512MB
+## Disk Limit
+disk_free_limit.absolute = 256MB
+{% if 'rabbitmq_management' in rabbitmq_plugins %}
+
+## Management
+management.rates_mode = basic
+management.login_session_timeout = 60
+management.tcp.port = {{ rabbitmq_tcp_mgmt_port }}
+management.tcp.ip = {{ rabbitmq_bind_address }}
+management.tcp.shutdown_timeout = 120000
+management.tcp.max_keepalive = 360000
+management.tcp.idle_timeout = 60000
+management.tcp.inactivity_timeout = 120000
+management.tcp.request_timeout = 120000
+management.tcp.compress = true
+{%   if rabbitmq_enable_tls %}
+
+## HTTPS listener settings.
+# management.ssl.port = {{ rabbitmq_tls_mgmt_port }}
+# management.ssl.cacertfile = /path/to/ca_certificate.pem
+# management.ssl.certfile = /path/to/server_certificate.pem
+# management.ssl.keyfile = /path/to/server_key.pem
+{%   endif %}
+{% endif %}

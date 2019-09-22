@@ -6,31 +6,42 @@
     url: "{{ erlang_apt_repo_key }}"
     state: present
 
-- name: Add repository for Erlang packages
+- name: repository | Add repository for Erlang packages
   apt_repository:
     repo: "{{ erlang_apt_repo_string }}"
+  register: erlang_apt_repository
 
-- name: Create apt config to pin Bintray Erlang repo
+- name: repository | Create apt config to pin Bintray Erlang repo
   blockinfile:
     path: /etc/apt/preferences.d/erlang
     block: |
       Package: erlang*
       Pin: release o=Bintray
-      Pin-Priority: 1000
+      Pin-Priority: 1001
     create: yes
 
-- name: Add apt key for additional RabbitMQ repository
+- name: repository | Add apt key for additional RabbitMQ repository
   apt_key:
     id: "{{ rabbitmq_apt_repo_keyid }}"
     url: "{{ rabbitmq_apt_repo_key }}"
     state: present
 
-- name: Add repository for RabbitMQ packages
+- name: repository | Add repository for RabbitMQ packages
   apt_repository:
     repo: "{{ rabbitmq_apt_repo_string }}"
+  register: rabbitmq_apt_repository
 
-- name: Update apt cache
+- name: repository | Create apt config to pin Bintray RabbitMQ repo
+  blockinfile:
+    path: /etc/apt/preferences.d/rabbitmq
+    block: |
+      Package: rabbitmq*
+      Pin: release o=Bintray
+      Pin-Priority: 1001
+    create: yes
+
+- name: repository | Update apt cache
   apt:
     update_cache: yes
-    cache_valid_time: 3600
-
+  when:
+  - rabbitmq_apt_repository.changed or erlang_apt_repository.changed

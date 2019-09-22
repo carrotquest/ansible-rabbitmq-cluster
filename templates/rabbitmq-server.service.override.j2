@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+
+[Service]
+LimitNOFILE={{ rabbitmq_limit_files }}
+LimitNPROC={{ rabbitmq_limit_sockets }}
+{% if rabbitmq_memlock_enabled %}
+LimitMEMLOCK=infinity
+{% endif %}

@@ -1,11 +1,11 @@
 ---
 
-- name: Install Erlang packages
+- name: install | Erlang packages
   apt:
     name: "{{ erlang_packages }}"
     state: present
 
-- name: Install RabbitMQ packages
+- name: install | RabbitMQ packages
   apt:
     name: "{{ rabbitmq_packages }}"
     state: present

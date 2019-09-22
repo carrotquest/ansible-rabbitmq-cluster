@@ -1,26 +1,32 @@
 ---
 
 - include_tasks: hosts.yml
-  when: update_hosts
+  when:
+    - rabbitmq_update_hosts
 
 - include_tasks: repository.yml
 
 - include_tasks: install.yml
 
 - include_tasks: erlang_cookie.yml
-  when: rabbitmq_create_cluster
+  when:
+    - rabbitmq_create_cluster
 
 - include_tasks: tls.yml
-  when: rabbitmq_enable_tls
+  when:
+    - rabbitmq_enable_tls
 
 - include_tasks: config.yml
 
 - include_tasks: service.yml
 
 - include_tasks: cluster.yml
-  when: rabbitmq_create_cluster
+  when:
+    - rabbitmq_create_cluster
 
 - include_tasks: create_users.yml
 
 - include_tasks: enable_ha_queues.yml
-  when: rabbitmq_backup_queues_in_two_nodes
+  when:
+    - rabbitmq_create_cluster
+    - rabbitmq_cluster_ha_enabled

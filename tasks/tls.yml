@@ -8,6 +8,6 @@
     group: rabbitmq
     mode: 0644
   with_items:
-    - { src: "{{ cacertfile }}", dest: "{{ cacertfile_dest }}" }
-    - { src: "{{ certfile }}", dest: "{{ certfile_dest }}" }
-    - { src: "{{ keyfile }}", dest: "{{ keyfile_dest }}" }
+    - { src: "{{ rabbitmq_cacertfile }}", dest: "{{ rabbitmq_cacertfile_dest }}" }
+    - { src: "{{ rabbitmq_certfile }}", dest: "{{ rabbitmq_certfile_dest }}" }
+    - { src: "{{ rabbitmq_keyfile }}", dest: "{{ rabbitmq_keyfile_dest }}" }
