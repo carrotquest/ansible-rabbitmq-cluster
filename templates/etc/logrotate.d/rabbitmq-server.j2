@@ -1,3 +1,4 @@
+{{ ansible_managed | comment }}
 /var/log/rabbitmq/*.log {
         {{ rabbitmq_logrotate_period }}
         missingok
