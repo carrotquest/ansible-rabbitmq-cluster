@@ -1,6 +1,7 @@
 # Table of Content
 
 <!-- MarkdownTOC -->
+
 - Ansible Role: RabbitMQ Cluster
 - Requirements
 - Must-have Role Variables
@@ -8,7 +9,7 @@
 - Example
 - License
 - Author Information
-<!-- /MarkdownTOC -->
+  <!-- /MarkdownTOC -->
 
 ## Ansible Role: RabbitMQ Cluster
 
@@ -55,7 +56,7 @@ example:
       10.0.0.10 eu-central-1-mq-master   (whatever the command `hostname -f` outputs on this host)
       10.0.0.11 eu-central-1-mq-slave-01 (whatever the command `hostname -f` outputs on this host)
 
-    rabbitmq_create_cluster: yes
+    rabbitmq_cluster: yes
 
 To use cluster or not. Default yes, which means slave will join the master as a cluster.
 

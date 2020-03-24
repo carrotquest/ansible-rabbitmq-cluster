@@ -18,10 +18,13 @@ rabbitmq_packages:
 
 # cluster
 rabbitmq_cluster_name: rabbitmq
-rabbitmq_create_cluster: yes
+rabbitmq_cluster: true
+rabbitmq_cluster_ha_enabled: false
+rabbitmq_cluster_ha_batch: 1000
 
 # We just need one of installed hosts to be cluster join endpoint - will choose first node of "rabbitmq" inventory group
-rabbitmq_cluster_leader: "{{ hostvars[groups['rabbitmq'][0]]['ansible_hostname_short'] }}"
+rabbitmq_hosts: 'rabbitmq'
+rabbitmq_cluster_leader: "{{ hostvars[groups[rabbitmq_hosts][0]]['ansible_hostname'] }}"
 rabbitmq_bind_address: "{{ ansible_host }}"
 rabbitmq_ip: "{{ ansible_host }}"
 
@@ -45,7 +48,7 @@ rabbitmq_logrotate_amount: 8
 # 4096 should be sufficient for most development workloads
 rabbitmq_limit_files: 4096
 rabbitmq_limit_sockets: 4096
-rabbitmq_memlock_enabled: no
+rabbitmq_memlock_enabled: false
 
 # default ports
 rabbitmq_tls_port: 5671
@@ -67,7 +70,7 @@ rabbitmq_enable_tls: false
 rabbitmq_tls_only: false
 
 rabbitmq_tls_verify: "verify_none"
-rabbitmq_tls_fail_if_no_peer_cert: no
+rabbitmq_tls_fail_if_no_peer_cert: false
 
 rabbitmq_cacertfile: ""
 rabbitmq_cacertfile_dest: "/etc/rabbitmq/cacert.pem"
@@ -82,10 +85,7 @@ rabbitmq_keyfile_dest: "/etc/rabbitmq/key.pem"
 # Queues can optionally be made mirrored across all nodes, or exactly N number of nodes
 # By enabling this variable to true, there will be 1 queue master and 1 queue mirror.
 # If the node running the queue master becomes unavailable, the queue mirror will be automatically promoted to master.
-rabbitmq_cluster_ha_enabled: no
-rabbitmq_cluster_ha_strategy: exactly
-rabbitmq_cluster_ha_params: 2
-rabbitmq_cluster_ha_batch: 10000
+rabbitmq_policies: []
 
 rabbitmq_users:
   - name: 'rabbitmqadmin'

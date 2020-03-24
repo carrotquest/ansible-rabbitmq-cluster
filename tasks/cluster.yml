@@ -3,12 +3,13 @@
   service:
     name: rabbitmq-server
     state: started
-    enabled: yes
+    enabled: true
 
 - name: cluster | Make sure RabbitMQ app is up
   shell: |
     rabbitmqctl start_app
   register: rabbitmq_start_app
+  changed_when: no
 
 - name: cluster | Check cluster name is set
   shell: |
@@ -28,13 +29,13 @@
 
 ## for Ansible 2.7
 - name: cluster | Set RabbitMQ cluster name
-  shell: |
-    rabbitmqctl set_cluster_name {{ rabbitmq_cluster_name }}
+  # shell: |
+  #   rabbitmqctl set_cluster_name {{ rabbitmq_cluster_name }}
 ## for Ansible 2.8+
-#	 rabbitmq_global_parameter:
-#    name: cluster_name
-#    value: "{{ rabbitmq_cluster_name | to_json }}"
-#    state: present
+  rabbitmq_global_parameter:
+    name: cluster_name
+    value: "{{ rabbitmq_cluster_name | to_json }}"
+    state: present
   when:
     - rabbitmq_cluster_name is defined
     - rabbitmq_cluster_name_state.stdout == '0'

@@ -42,6 +42,7 @@ ssl_options.fail_if_no_peer_cert = {{rabbitmq_tls_fail_if_no_peer_cert|lower}}
 ## HA Clustering
 cluster_partition_handling = autoheal
 mirroring_sync_batch_size = {{ rabbitmq_cluster_ha_batch }}
+queue_master_locator = random
 {% endif %}
 
 ## Users

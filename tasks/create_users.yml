@@ -8,17 +8,21 @@
     read_priv: "{{ item['read_priv'] }}"
     write_priv: "{{ item['write_priv'] }}"
     tags: "{{ item['tags'] }}"
-    state: present
+    state: "{{ item['state'] }}"
   become: true
+  no_log: true
   with_items: "{{ rabbitmq_users }}"
-  when: (rabbitmq_create_cluster is defined and not rabbitmq_create_cluster) or rabbitmq_create_cluster is not defined
-  
+  when:
+    - not rabbitmq_cluster | bool
+    - rabbitmq_users is defined
+
 - name: create_users | Remove RabbitMQ default user
   rabbitmq_user:
     user: guest
     state: absent
   become: true
-  when: (rabbitmq_create_cluster is defined and not rabbitmq_create_cluster) or rabbitmq_create_cluster is not defined
+  when:
+    - not rabbitmq_cluster | bool
 
 - name: create_users | Creating RabbitMQ cluster users
   rabbitmq_user:
@@ -29,16 +33,20 @@
     read_priv: "{{ item['read_priv'] }}"
     write_priv: "{{ item['write_priv'] }}"
     tags: "{{ item['tags'] }}"
-    state: present
-  run_once: yes
+    state: "{{ item['state'] }}"
   become: true
+  no_log: true
+  run_once: true
   with_items: "{{ rabbitmq_users }}"
-  when: rabbitmq_create_cluster is defined and rabbitmq_create_cluster
+  when:
+    - rabbitmq_cluster | bool
+    - rabbitmq_users is defined
 
 - name: create_users | Remove RabbitMQ default user
   rabbitmq_user:
     user: guest
     state: absent
-  run_once: yes
   become: true
-  when: rabbitmq_create_cluster is defined and rabbitmq_create_cluster
+  run_once: true
+  when:
+    - rabbitmq_cluster | bool

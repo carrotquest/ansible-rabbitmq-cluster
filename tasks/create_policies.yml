@@ -1,0 +1,15 @@
+---
+- name: Apply rabbitmq policies
+  rabbitmq_policy:
+    name: "{{ item.policy }}"
+    tags: "{{ item.tags | d(omit) }}"
+    pattern: "{{ item.pattern | d('.*') }}"
+    priority: "{{ item.priority | d(0) }}"
+    state: "{{ item.state | d('present') }}"
+    apply_to: all
+  run_once: true
+  become: true
+  with_items: "{{ rabbitmq_ha_policies }}"
+  when:
+    - rabbitmq_cluster | bool
+    - rabbitmq_ha_policies is defined

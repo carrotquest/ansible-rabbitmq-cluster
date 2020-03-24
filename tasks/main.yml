@@ -10,7 +10,7 @@
 
 - include_tasks: erlang_cookie.yml
   when:
-    - rabbitmq_create_cluster
+    - rabbitmq_cluster
 
 - include_tasks: tls.yml
   when:
@@ -22,11 +22,8 @@
 
 - include_tasks: cluster.yml
   when:
-    - rabbitmq_create_cluster
+    - rabbitmq_cluster
 
 - include_tasks: create_users.yml
 
-- include_tasks: enable_ha_queues.yml
-  when:
-    - rabbitmq_create_cluster
-    - rabbitmq_cluster_ha_enabled
+- include_tasks: create_policies.yml
