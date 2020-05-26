@@ -54,12 +54,12 @@ log.file.level = {{ rabbitmq_log_level }}
 log.console = false
 
 ## Memory Limit
-vm_memory_high_watermark_paging_ratio = 0.3
-vm_memory_high_watermark.relative = 0.9
-vm_memory_high_watermark.absolute = 256MB
+vm_memory_high_watermark_paging_ratio = 0.65
+vm_memory_high_watermark.relative = 0.85
+vm_memory_high_watermark.absolute = 512MB
 
 ## Disk Limit
-disk_free_limit.absolute = 256MB
+disk_free_limit.absolute = 512MB
 {% if 'rabbitmq_management' in rabbitmq_plugins %}
 
 ## Management

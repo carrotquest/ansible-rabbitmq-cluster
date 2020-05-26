@@ -1,13 +1,13 @@
 {{ ansible_managed | comment }}
 /var/log/rabbitmq/*.log {
-        {{ rabbitmq_logrotate_period }}
-        missingok
-        rotate {{ rabbitmq_logrotate_amount }}
-        compress
-        delaycompress
-        notifempty
-        sharedscripts
-        postrotate
-            /etc/init.d/rabbitmq-server rotate-logs > /dev/null
-        endscript
+  {{ rabbitmq_logrotate_period }}
+  missingok
+  rotate {{ rabbitmq_logrotate_amount }}
+  compress
+  delaycompress
+  notifempty
+  sharedscripts
+  postrotate
+    /etc/init.d/rabbitmq-server rotate-logs > /dev/null
+  endscript
 }
