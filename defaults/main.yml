@@ -6,15 +6,41 @@ erlang_apt_repo_keyid: "6026DFCA"
 erlang_apt_repo_key: "https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc"
 erlang_apt_repo_string: "deb http://dl.bintray.com/rabbitmq-erlang/debian {{ ansible_distribution_release }} erlang"
 
+erlang_version: latest
 erlang_packages:
-  - erlang-nox
+  - "erlang-nox{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-asn1{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-base{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-crypto{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-diameter{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-edoc{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-eldap{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-erl-docgen{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-eunit{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-ftp{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-inets{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-mnesia{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-nox{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-odbc{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-os-mon{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-parsetools{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-public-key{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-runtime-tools{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-snmp{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-ssh{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-ssl{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-syntax-tools{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-tftp{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-tools{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
+  - "erlang-xmerl{% if erlang_version is defined and erlang_version != '' and erlang_version != 'latest' %}={{ erlang_version }}*{% endif %}"
 
 rabbitmq_apt_repo_keyid: "{{ erlang_apt_repo_keyid }}"
 rabbitmq_apt_repo_key: "{{ erlang_apt_repo_key }}"
 rabbitmq_apt_repo_string: "deb https://dl.bintray.com/rabbitmq/debian {{ ansible_distribution_release }} main"
 
+rabbitmq_version: latest
 rabbitmq_packages:
-  - rabbitmq-server
+  - "rabbitmq-server{% if rabbitmq_version is defined and rabbitmq_version != '' and rabbitmq_version != 'latest' %}={{ rabbitmq_version }}*{% endif %}"
 
 # cluster
 rabbitmq_cluster_name: rabbitmq
