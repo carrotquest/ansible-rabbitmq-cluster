@@ -7,9 +7,9 @@
     priority: "{{ item.priority | d(0) }}"
     state: "{{ item.state | d('present') }}"
     apply_to: all
-  run_once: true
   become: true
   with_items: "{{ rabbitmq_ha_policies }}"
   when:
     - rabbitmq_cluster | bool
+    - ansible_hostname == rabbitmq_cluster_leader or ansible_fqdn == rabbitmq_cluster_leader
     - rabbitmq_ha_policies is defined
