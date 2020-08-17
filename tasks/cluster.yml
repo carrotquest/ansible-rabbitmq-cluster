@@ -9,23 +9,21 @@
   shell: |
     rabbitmqctl start_app
   register: rabbitmq_start_app
-  changed_when: no
+  changed_when: false
 
 - name: cluster | Check cluster name is set
   shell: |
     rabbitmqctl cluster_status | grep -E 'cluster_name,<<"{{ rabbitmq_cluster_name }}' | wc -l
   register: rabbitmq_cluster_name_state
-  changed_when: no
-  when:
-    - rabbitmq_start_app.rc == 0
+  changed_when: false
+  check_mode: false
 
 - name: cluster | Check if node already in cluster
   shell: |
     rabbitmqctl cluster_status | head -1 | grep -E 'rabbit@{{ rabbitmq_cluster_leader }}' | wc -l
   register: rabbitmq_cluster_node_state
-  changed_when: no
-  when:
-    - rabbitmq_start_app.rc == 0
+  changed_when: false
+  check_mode: false
 
 ## for Ansible 2.7
 - name: cluster | Set RabbitMQ cluster name
@@ -39,10 +37,12 @@
   when:
     - rabbitmq_cluster_name is defined
     - rabbitmq_cluster_name_state.stdout == '0'
+    - rabbitmq_start_app.rc == '0'
 
-- include_tasks: join_cluster.yml
+- import_tasks: join_cluster.yml
   when:
     - ansible_hostname != rabbitmq_cluster_leader
     - ansible_fqdn != rabbitmq_cluster_leader
     - rabbitmq_cluster_name_state.stdout == '0'
     - rabbitmq_cluster_node_state.stdout == '0'
+    - rabbitmq_start_app.rc == '0'
