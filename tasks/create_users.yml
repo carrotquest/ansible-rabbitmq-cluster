@@ -1,5 +1,5 @@
 ---
-- name: create_users | Creating RabbitMQ single users
+- name: create_users | Creating RabbitMQ users
   rabbitmq_user:
     name: "{{ item['name'] }}"
     password: "{{ item['password'] }}"
@@ -21,6 +21,7 @@
     user: guest
     state: absent
   become: true
+  no_log: true
   when:
     - not rabbitmq_cluster | bool
 
@@ -36,17 +37,18 @@
     state: "{{ item['state'] }}"
   become: true
   no_log: true
-  run_once: true
   with_items: "{{ rabbitmq_users }}"
   when:
     - rabbitmq_cluster | bool
+    - ansible_hostname == rabbitmq_cluster_leader or ansible_fqdn == rabbitmq_cluster_leader
     - rabbitmq_users is defined
 
-- name: create_users | Remove RabbitMQ default user
+- name: create_users | Remove RabbitMQ cluster default user
   rabbitmq_user:
     user: guest
     state: absent
   become: true
-  run_once: true
+  no_log: true
   when:
     - rabbitmq_cluster | bool
+    - ansible_hostname == rabbitmq_cluster_leader or ansible_fqdn == rabbitmq_cluster_leader
