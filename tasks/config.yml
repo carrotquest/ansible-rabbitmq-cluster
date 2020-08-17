@@ -17,7 +17,7 @@
     names: "{{ item }}"
     prefix: /usr/lib/rabbitmq
     state: enabled
-    new_only: yes
+    new_only: "{{ rabbitmq_plugins_new_only }}"
   with_items: "{{ rabbitmq_plugins }}"
   notify:
     - restart rabbitmq-server

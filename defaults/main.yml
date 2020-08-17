@@ -86,6 +86,7 @@ rabbitmq_tls_mgmt_port: 15671
 rabbitmq_tcp_mgmt_port: 15672
 
 # plugins for HTTP API monitor
+rabbitmq_plugins_new_only: true
 rabbitmq_plugins:
   - rabbitmq_management
   - rabbitmq_management_agent
