@@ -10,7 +10,7 @@
       state: directory
   - name: service | Create systemd service override file
     template:
-      src: rabbitmq-server.service.override.j2
+      src: etc/systemd/system/rabbitmq-server.service.d/override.conf.j2
       dest: /etc/systemd/system/rabbitmq-server.service.d/override.conf
       owner: root
       group: root
@@ -19,12 +19,10 @@
     systemd:
       daemon_reload: yes
   when:
-  - ansible_service_mgr == 'systemd'
+    - ansible_service_mgr == 'systemd'
 
 - name: service | RabbitMQ service started and enabled
   service:
     name: rabbitmq-server
-    enabled: yes
     state: started
-
-
+    enabled: yes

@@ -18,7 +18,7 @@
       Package: erlang*
       Pin: release o=Bintray
       Pin-Priority: 1001
-    create: yes
+    create: true
 
 - name: repository | Add apt key for additional RabbitMQ repository
   apt_key:
@@ -38,10 +38,36 @@
       Package: rabbitmq*
       Pin: release o=Bintray
       Pin-Priority: 1001
-    create: yes
+    create: true
 
 - name: repository | Update apt cache
   apt:
-    update_cache: yes
+    update_cache: true
   when:
-  - rabbitmq_apt_repository.changed or erlang_apt_repository.changed
+    - rabbitmq_apt_repository.changed or erlang_apt_repository.changed
+
+- name: install | Erlang packages
+  apt:
+    name: "{{ erlang_packages }}"
+    state: present
+    force: true
+    force_apt_get: true
+    dpkg_options: "{{ dpkg_force_overwrite_configs | ternary('force-confdef,force-confnew', 'force-confdef,force-confold') }}"
+    update_cache: true
+    cache_valid_time: "{{ apt_cache_timeout | d(3600) }}"
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+    RUNLEVEL: 1
+
+- name: install | RabbitMQ packages
+  apt:
+    name: "{{ rabbitmq_packages }}"
+    state: present
+    force: true
+    force_apt_get: true
+    dpkg_options: "{{ dpkg_force_overwrite_configs | ternary('force-confdef,force-confnew', 'force-confdef,force-confold') }}"
+    update_cache: true
+    cache_valid_time: "{{ apt_cache_timeout | d(3600) }}"
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+    RUNLEVEL: 1

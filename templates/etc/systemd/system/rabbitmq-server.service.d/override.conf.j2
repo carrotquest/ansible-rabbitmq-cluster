@@ -1,0 +1,25 @@
+{{ ansible_managed | comment }}
+[Service]
+LimitNOFILE={{ rabbitmq_limit_files }}
+LimitNPROC={{ rabbitmq_limit_sockets }}
+{% if rabbitmq_memlock_enabled %}
+LimitMEMLOCK=infinity
+{% endif %}
+# Security options
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+LockPersonality=true
+NoNewPrivileges=true
+PermissionsStartOnly=true
+PrivateTmp=true
+
+StandardOutput=journal
+StandardError=inherit
+
+Restart=always
+RestartSec=3
+TimeoutSec=300
+# Disable timeout logic and wait until process is stopped
+TimeoutStopSec=0
+KillSignal=SIGTERM
+KillMode=process

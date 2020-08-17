@@ -4,9 +4,9 @@
   when:
     - rabbitmq_update_hosts
 
-- include_tasks: repository.yml
-
-- include_tasks: install.yml
+- include_tasks: debian.yml
+  when:
+    - ansible_os_family == 'Debian'
 
 - include_tasks: erlang_cookie.yml
   when:

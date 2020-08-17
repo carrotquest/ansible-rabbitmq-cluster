@@ -1,13 +1,14 @@
 ---
 # Configure RabbitMQ for cluster
 - name: erlang_cookie | Update Erlang cookie
-  template:
-    src: erlang.cookie.j2
+  copy:
+    content: "{{ rabbitmq_erlang_cookie }}"
     dest: /var/lib/rabbitmq/.erlang.cookie
     owner: rabbitmq
     group: rabbitmq
     mode: 0400
-    backup: yes
+    force: true
+    backup: true
   notify: stop rabbitmq-server
 
 - meta: flush_handlers
