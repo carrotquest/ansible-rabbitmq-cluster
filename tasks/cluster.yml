@@ -9,27 +9,35 @@
   shell: |
     rabbitmqctl start_app
   register: rabbitmq_start_app
+  become: true
   changed_when: false
 
 - name: cluster | Check cluster name is set
   shell: |
-    rabbitmqctl cluster_status | grep -E 'cluster_name,<<"{{ rabbitmq_cluster_name }}' | wc -l
+    rabbitmqctl cluster_status | grep -iE 'cluster.*{{ rabbitmq_cluster_name }}' | wc -l
   register: rabbitmq_cluster_name_state
+  become: true
   changed_when: false
   check_mode: false
 
 - name: cluster | Check if node already in cluster
   shell: |
-    rabbitmqctl cluster_status | head -1 | grep -E 'rabbit@{{ rabbitmq_cluster_leader }}' | wc -l
+    rabbitmqctl cluster_status | grep -iE 'rabbit@{{ rabbitmq_cluster_leader }}' | wc -l
   register: rabbitmq_cluster_node_state
+  become: true
   changed_when: false
   check_mode: false
 
 ## for Ansible 2.7
-- name: cluster | Set RabbitMQ cluster name
+# - name: cluster | Set RabbitMQ cluster name
   # shell: |
   #   rabbitmqctl set_cluster_name {{ rabbitmq_cluster_name }}
+  # when:
+    # - rabbitmq_cluster_name is defined
+    # - rabbitmq_cluster_name_state.stdout == '0'
+
 ## for Ansible 2.8+
+- name: cluster | Set RabbitMQ cluster name
   rabbitmq_global_parameter:
     name: cluster_name
     value: "{{ rabbitmq_cluster_name | to_json }}"
@@ -37,6 +45,7 @@
   when:
     - rabbitmq_cluster_name is defined
     - rabbitmq_cluster_name_state.stdout == '0'
+    - rabbitmq_start_app.rc == 0
 
 - include_tasks: join_cluster.yml
   when:
@@ -44,3 +53,4 @@
     - ansible_fqdn != rabbitmq_cluster_leader
     - rabbitmq_cluster_name_state.stdout == '0'
     - rabbitmq_cluster_node_state.stdout == '0'
+    - rabbitmq_start_app.rc == 0
