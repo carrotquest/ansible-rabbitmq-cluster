@@ -23,9 +23,8 @@ tcp_listen_options.keepalive = true
 num_acceptors.tcp = 1000
 
 ## Listeners
-listeners.tcp.local = 127.0.0.1:{{ rabbitmq_node_port }}
-listeners.tcp.local_v6 = ::1:{{ rabbitmq_node_port }}
 listeners.tcp.default = {{ rabbitmq_bind_address }}:{{ rabbitmq_node_port }}
+
 {% if rabbitmq_enable_tls %}
 
 ## TLS
