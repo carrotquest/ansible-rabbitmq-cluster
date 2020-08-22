@@ -38,6 +38,16 @@ This parameter is used to determine which node is the master, because some tasks
 
 This role uses ansible fqdn equals `rabbitmq_cluster_master` or not to determine if it's master or slave.
 
+## Schemes
+
+### Single Node cluster look a like
+
+![mq_single](diagrams/mq_single.png)
+
+### 3-Node cluster look a like
+
+![mq_cluster](diagrams/mq_cluster.png)
+
 ## Optional Role Variables and Defaults
 
 All the other variables are optional and listed below along with default values (see `defaults/main.yml`):
