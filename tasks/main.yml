@@ -20,6 +20,8 @@
 
 - include_tasks: service.yml
 
+- include_tasks: plugins.yml
+
 - include_tasks: cluster.yml
   when:
     - rabbitmq_cluster

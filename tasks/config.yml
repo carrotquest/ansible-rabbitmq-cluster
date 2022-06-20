@@ -11,11 +11,3 @@
     - { src: etc/rabbitmq/rabbitmq-env.conf.j2, dest: /etc/rabbitmq/rabbitmq-env.conf }
   notify:
     - restart rabbitmq-server
-
-- name: Enable the plugins is installed
-  rabbitmq_plugin:
-    names: "{{ item }}"
-    prefix: /usr/lib/rabbitmq
-    state: enabled
-    new_only: "{{ rabbitmq_plugins_new_only }}"
-  with_items: "{{ rabbitmq_plugins }}"
