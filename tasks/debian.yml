@@ -8,7 +8,8 @@
 
 - name: repository | Add repository for Erlang packages
   apt_repository:
-    repo: "{{ erlang_apt_repo_strings | join('\r') }}"
+    repo: "{{ item }}"
+  loop: "{{ erlang_apt_repo_strings }}"
   register: erlang_apt_repository
 
 - name: repository | Create apt config to pin Bintray Erlang repo
@@ -34,7 +35,8 @@
 
 - name: repository | Add repository for RabbitMQ packages
   apt_repository:
-    repo: "{{ rabbitmq_apt_repo_strings | join('\r') }}"
+    repo: "{{ item }}"
+  loop: "{{ rabbitmq_apt_repo_strings }}"
   register: rabbitmq_apt_repository
 
 - name: repository | Create apt config to pin Bintray RabbitMQ repo
