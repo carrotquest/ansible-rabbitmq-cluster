@@ -20,6 +20,11 @@
       Pin-Priority: 1001
     create: true
 
+- name: repository | Ensure keyring directory exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+
 - name: repository | Add apt key for additional RabbitMQ repository
   apt_key:
     id: "{{ rabbitmq_apt_repo_keyid }}"

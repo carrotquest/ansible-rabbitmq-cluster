@@ -4,7 +4,7 @@ rabbitmq_update_hosts: false
 
 dpkg_force_overwrite_configs: false
 
-erlang_apt_repo_keyid: "57ebb1cc"
+erlang_apt_repo_keyid: "434975BD900CCBE4F7EE1B1ED208507CA14F4FCA"
 erlang_apt_repo_key: "https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc"
 erlang_apt_repo_strings:
   - "deb https://packages.erlang-solutions.com/ubuntu {{ ansible_distribution_release }} contrib"
