@@ -1,5 +1,5 @@
 ---
-- name: config | Update default RabbitMQ Configuration files
+- name: config | Update default RabbitMQ configuration files
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -12,7 +12,7 @@
   notify:
     - restart rabbitmq-server
 
-- name: Enable the plugins is installed
+- name: Enable installed plugins
   rabbitmq_plugin:
     names: "{{ item }}"
     prefix: /usr/lib/rabbitmq
